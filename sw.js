@@ -2,7 +2,7 @@
    La page est rechargée depuis GitHub si le réseau répond en moins de 3 s, sinon depuis l'iPad ;
    les autres fichiers sont servis depuis l'iPad et mis à jour en arrière-plan.
    Après une modification des fichiers : augmenter CACHE (bdp-v1 → bdp-v2…). */
-const CACHE='bdp-v4';
+const CACHE='bdp-v5';
 const FICHIERS=['./','index.html','aide.js','eps-aide.js','eps-charte-v1.css','prof.js','prof-plus.js','prof-demo.js','prof-poules.js','prof-cycle.js','prof-saisie.js','donnees.js','logique.js','scan.js','jsqr.js','jszip.js','xlsx.js','qrcode.js','manifest.webmanifest',
   'icon-32.png','icon-180.png','icon-192.png','icon-512.png','polices/archivo.woff2','polices/atkinson-400.woff2','polices/atkinson-700.woff2'];
 const IMAGES=[];

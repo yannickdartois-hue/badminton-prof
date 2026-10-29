@@ -116,34 +116,52 @@ function alertes(k,R,I){
 }
 
 /* ---------- Onglet Note ---------- */
+// Lignes dépliées (matchs, analyses, grille, aides) : gardées entre deux affichages
+const NOTE_OUVERT=new Set();let NOTE_TOUT=false;
 function vNote(){
   const L=eleves();if(!L.length)return `<h2>Note</h2><p class="muted">Aucune donnée pour cette classe.</p>`;
   const C=cfgNote(),R=resultatsPoules(),TN=seancesNotees(C);
   const K=[...new Set(poulesClasse().filter(p=>!p.rb).map(p=>p.seance))].sort((a,b)=>a-b);
-  const cel=(afl,k,max,champ,pos,val,sug,e)=>`<td>${selD(champ,k,e[champ])} ${e[champ]?selP(pos,k,e[pos]):''}<div><b>${fr(val)}</b> /${max}</div><div class="small muted">suggestion D${sug}</div><details class="small"><summary>grille</summary>${descr(afl,e[champ])}</details></td>`;
+  const sug=d=>`<span class="sug" title="suggestion tirée des séances">D${d}</span>`;
+  const cel=(k,max,champ,pos,val,s,e)=>`<td><span class="ncel">${selD(champ,k,e[champ])}${e[champ]?selP(pos,k,e[pos]):''}${sug(s)}</span><div class="small"><b>${fr(val)}</b> /${max}</div></td>`;
+  const resume=`AFL1 /12 · AFL2 et AFL3 /2, 4 ou 6 · matchs lus : ${TN.length?TN.map(labS).join(', '):'<b>aucun</b>'}`;
   return `<h2>Note · ${esc(DB.classe)}</h2>
-  <div class="rangee noprint"><button class="bt orange" type="button" data-act="saisierapide">Saisie rapide, élève par élève</button><span class="small muted">La grille de la fiche à l’écran, 4 gros boutons par AFL, Suivant.</span></div>
-  <section class="carte"><h3>Évaluation GAREEPS</h3>
+  <div class="rangee noprint"><button class="bt orange" type="button" data-act="saisierapide">Saisie rapide, élève par élève</button>
+    <button class="bt" type="button" data-ndettout="1">${NOTE_TOUT?'Replier les détails':'Déplier tous les détails'}</button></div>
+  <details class="carte reglnote noprint"${TN.length?'':' open'}><summary><b>Évaluation GAREEPS</b> <span class="small muted">${resume}</span></summary>
     <p class="small">Au moins 3 matchs de 4 min contre des adversaires de niveau équivalent. Avant le match, chacun décrit son projet (points forts, faibles, stratégie) ; le coach conseille son joueur au temps mort à 2 min ; l’arbitre dirige la rencontre et désigne le vainqueur.</p>
     <p class="small"><b>Matchs de l’épreuve</b> (séances et tours lus pour les aides) :</p>
     <div class="rangee">${K.length?K.map(x=>`<label class="coche mini"><input type="checkbox" data-ntour="${x}" ${TN.includes(x)?'checked':''}> ${labS(x)}</label>`).join(''):'<span class="muted small">aucune poule reçue</span>'}</div>
-    <p class="small muted">AFL1 /12, AFL2 et AFL3 /2, 4 ou 6 selon la répartition choisie par l’élève. Pour chaque AFL : le degré (D1 à D4, 4 parts égales du barème, ex. AFL1 : 0–3, 3–6, 6–9, 9–12), puis bas, milieu ou haut de la fourchette. Les descripteurs de la fiche s’affichent sous « grille ».</p>
-  </section>
-  <div class="tablewrap"><table class="cl bil note"><thead><tr><th>Élève</th><th>Rép. AFL2/3</th><th>Matchs de l’épreuve</th>
-    <th>AFL1 /12</th><th>AFL2</th><th>AFL3</th><th>Total /20</th><th>Aides</th></tr></thead><tbody>
-  ${L.map(k=>{const N=noteEleve(k,R,C),I=indicateurs(k,R),A=alertes(k,R,I),e=N.e,M=N.M,ref=reperePts(M.j?M.pts:null);
-    return `<tr><td><button class="lien" type="button" data-act="fiche" data-k="${esc(k)}">${esc(nomAffiche(k))}</button>${A.length?` <span class="badge st-oubli" title="${esc(A.join(' '))}">⚠</span>`:''}</td>
+    <p class="small muted">AFL1 /12, AFL2 et AFL3 /2, 4 ou 6 selon la répartition choisie par l’élève. Pour chaque AFL : le degré (D1 à D4, 4 parts égales du barème, ex. AFL1 : 0–3, 3–6, 6–9, 9–12), puis bas, milieu ou haut de la fourchette.</p>
+  </details>
+  <div class="tablewrap"><table class="cl bil note compacte"><thead><tr><th>Élève</th><th>Rép.</th><th>Matchs</th>
+    <th>AFL1 /12</th><th>AFL2</th><th>AFL3</th><th>/20</th><th class="noprint"><span class="vh">Détail</span></th></tr></thead><tbody>
+  ${L.map(k=>{const N=noteEleve(k,R,C),I=indicateurs(k,R),A=alertes(k,R,I),e=N.e,M=N.M,ouv=NOTE_TOUT||NOTE_OUVERT.has(k);
+    return `<tr class="${ouv?'ouvert':''}"><td><button class="lien" type="button" data-act="fiche" data-k="${esc(k)}">${esc(nomAffiche(k))}</button>${A.length?` <span class="badge st-oubli" title="${esc(A.join(' '))}">⚠</span>`:''}</td>
       <td><select class="nsel" data-note="rep" data-k="${esc(k)}">${Object.keys(REPS).map(r=>`<option${(e.rep||'4/4')===r?' selected':''}>${r}</option>`).join('')}</select></td>
-      <td class="small">${M.j?`<b>${M.j}</b> match${M.j>1?'s':''}${M.j<3?' <span class="badge st-oubli">moins de 3</span>':''}<br>${M.v} V · ${M.n} N · ${M.d} D<br>points marqués ${M.pts}`:'<span class="muted">aucun match lu</span>'}<br>projets ${I.pjOk}/${I.pj} réalisés<br>analyses ${M.an.length}/${M.j}${M.g15?' · 15 min ✓':''}${M.an.length||M.g15?`<details><summary>lire</summary>${M.g15?`<div><b>15 min</b> · duo : ${esc(M.g15.duo||'—')} · duel : ${esc(M.g15.duel||'—')}</div>`:''}${M.an.map(a=>`<div><b>contre ${esc(a.adv)}</b>${htmlAnalyse(a.an)}</div>`).join('')}</details>`:''}</td>
-      ${cel('afl1',k,12,'a1','p1',N.r.a1,suggestionAFL1(I,M),e)}
-      ${cel('afl2',k,N.rep[0],'a2','p2',N.r.a2,suggestionAFL2(I),e)}
-      ${cel('afl3',k,N.rep[1],'a3','p3',N.r.a3,suggestionAFL3(I),e)}
+      <td class="small">${M.j?`<b>${M.j}</b> · ${M.v} V${M.j<3?' <span class="badge st-oubli">moins de 3</span>':''}`:'<span class="muted">aucun</span>'}</td>
+      ${cel(k,12,'a1','p1',N.r.a1,suggestionAFL1(I,M),e)}
+      ${cel(k,N.rep[0],'a2','p2',N.r.a2,suggestionAFL2(I),e)}
+      ${cel(k,N.rep[1],'a3','p3',N.r.a3,suggestionAFL3(I),e)}
       <td><b class="tot">${fr(N.tot05)}</b>${N.tot!=null&&N.tot!==N.tot05?`<div class="small muted">${fr(N.tot)}</div>`:''}</td>
-      <td class="small aides">${I.recues}/${I.seances} séances (carnet) · ${I.hauts}/${I.ex} exos vert (${I.hautsV} vérifiés) · ${I.valid} validation${I.valid>1?'s':''} faite${I.valid>1?'s':''} · ${I.mt} MT validé${I.mt>1?'s':''} · ${I.chg} chgt axe · ${I.arb} arbitrage${I.arb>1?'s':''}${I.coach?` · ${I.coach} match${I.coach>1?'s':''} codé${I.coach>1?'s':''} en coach`:''}${I.codes.some(Boolean)?` · codes reçus 0:${I.codes[0]} 1:${I.codes[1]} 2:${I.codes[2]} 3:${I.codes[3]} x:${I.codes[4]}`:''}${I.etDeb!=null?` · étoile AFL1 ${fr(I.etDeb)}${I.etFin!=null?'→'+fr(I.etFin):''}`:''}${A.length?`<div class="alerte">${A.map(esc).join('<br>')}</div>`:''}</td></tr>`}).join('')}
+      <td class="noprint"><button class="bt mini ndet" type="button" data-ndet="${esc(k)}" aria-expanded="${ouv}" title="Détail : matchs, analyses, grille, aides">${ouv?'▴':'▾'}</button></td></tr>
+      ${ouv?`<tr class="detnote"><td colspan="8">
+        <div><b>Matchs de l’épreuve</b> : ${M.j?`${M.j} match${M.j>1?'s':''} · ${M.v} V · ${M.n} N · ${M.d} D · points marqués ${M.pts}`:'aucun match lu'} · projets ${I.pjOk}/${I.pj} réalisés · analyses ${M.an.length}/${M.j}${M.g15?' · 15 min ✓':''}</div>
+        ${M.g15?`<div><b>15 min</b> · duo : ${esc(M.g15.duo||'—')} · duel : ${esc(M.g15.duel||'—')}</div>`:''}
+        ${M.an.map(a=>`<div><b>Analyse contre ${esc(a.adv)}</b>${htmlAnalyse(a.an)}</div>`).join('')}
+        <div class="grilles">${[['afl1','AFL1','a1'],['afl2','AFL2','a2'],['afl3','AFL3','a3']].map(([afl,lab,ch])=>`<details><summary><b>Grille ${lab}</b>${e[ch]?' · D'+e[ch]:''}</summary>${descr(afl,e[ch])}</details>`).join('')}</div>
+        <div><b>Aides</b> : ${I.recues}/${I.seances} séances (carnet) · ${I.hauts}/${I.ex} exos vert (${I.hautsV} vérifiés) · ${I.valid} validation${I.valid>1?'s':''} faite${I.valid>1?'s':''} · ${I.mt} MT validé${I.mt>1?'s':''} · ${I.chg} chgt axe · ${I.arb} arbitrage${I.arb>1?'s':''}${I.coach?` · ${I.coach} match${I.coach>1?'s':''} codé${I.coach>1?'s':''} en coach`:''}${I.codes.some(Boolean)?` · codes reçus 0:${I.codes[0]} 1:${I.codes[1]} 2:${I.codes[2]} 3:${I.codes[3]} x:${I.codes[4]}`:''}${I.etDeb!=null?` · étoile AFL1 ${fr(I.etDeb)}${I.etFin!=null?'→'+fr(I.etFin):''}`:''}</div>
+        ${A.length?`<div class="alerte">${A.map(esc).join('<br>')}</div>`:''}</td></tr>`:''}`}).join('')}
   </tbody></table></div>
-  <p class="small muted">Degrés : c’est toi qui choisis ; les « suggestions » et les aides viennent des séances reçues (carnet, exercices, matchs à thème, projets, arbitrages, codes du coach) et ne sont qu’un repère. Les adversaires étant de niveau équivalent, les victoires ne donnent pas la note. Total arrondi au demi-point.</p>
+  <p class="small muted">Tu choisis chaque degré ; « D2 » = degré suggéré par les séances reçues, un simple repère (les adversaires étant de niveau équivalent, les victoires ne donnent pas la note). ▾ : matchs, analyses, grille de la fiche et aides. Total arrondi au demi-point.</p>
   <div class="rangee noprint"><button class="bt orange" type="button" data-act="csvnote">Exporter les notes (CSV)</button><button class="bt" type="button" data-act="imprimer">Imprimer</button></div>`;
 }
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-ndet],[data-ndettout]');if(!b)return;
+  if(b.dataset.ndettout){NOTE_TOUT=!NOTE_TOUT;if(!NOTE_TOUT)NOTE_OUVERT.clear()}
+  else{const k=b.dataset.ndet;if(NOTE_TOUT){NOTE_TOUT=false;eleves().forEach(x=>NOTE_OUVERT.add(x))}NOTE_OUVERT.has(k)?NOTE_OUVERT.delete(k):NOTE_OUVERT.add(k)}
+  const y=window.scrollY;rendre();window.scrollTo(0,y);
+});
 function exporterNotes(){
   const C=cfgNote(),R=resultatsPoules();
   const rows=[['Classe','Élève','Répartition AFL2/AFL3','Matchs de l’épreuve','Victoires','Nuls','Défaites','Points marqués','Projets réalisés','Matchs analysés','Gestion des 15 min','Degré AFL1','AFL1 /12','Degré AFL2','AFL2','Degré AFL3','AFL3','Total /20','Total arrondi','Alertes']];
