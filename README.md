@@ -22,3 +22,8 @@ Les tournois du cycle (`bad-tournois` sur le même appareil, ou fichier `tournoi
 
 ## Fichiers partagés avec l'appli élève
 `donnees.js`, `logique.js`, `scan.js`, `qrcode.js`, `jsqr.js` : garder la même version dans les deux dépôts. Après une modification : augmenter `CACHE` dans `sw.js`.
+
+## Mise à jour du 29/10/2026
+- **Analyses des élèves** (fiche « Évaluation finale » du GAREEPS) : lues dans les poules ; visibles dans la fiche élève, dans la note (« lire », nombre de matchs analysés), dans la saisie rapide et dans l'export CSV. « Gestion des 15 min » aussi.
+- **Charte v1** (couleur #0e7490, `eps-charte-v1.css`, thème sombre en option) et **mode d'emploi** (bouton « ? », `aide.js` + `eps-aide.js`).
+- **Test automatique** `tests/circuit.js` (à lancer avant chaque mise en ligne) : copies identiques des fichiers partagés (et conformes à mon-eps), fichiers du hors ligne présents, circuit complet élève → QR et fichiers → prof → note GAREEPS → CSV, temps mort à 2 min, aucun envoi vers un autre site, démos, mode d'emploi, hors ligne, affichage téléphone / iPad / Galaxy Tab, aucune erreur JavaScript. Mode d'emploi en tête du fichier.

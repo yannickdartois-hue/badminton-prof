@@ -43,9 +43,10 @@ function seancesNotees(C){
 }
 // Matchs de l'épreuve pour un élève : joués, V-N-D, points marqués (simples des poules des séances notées)
 function matchsEpreuve(k,R,C){
-  const T=seancesNotees(C),x=R[k]||{},o={j:0,v:0,n:0,d:0,pts:0,contre:0,tours:[]};
+  const T=seancesNotees(C),x=R[k]||{},o={j:0,v:0,n:0,d:0,pts:0,contre:0,tours:[],an:[]};
   T.forEach(t=>{const c=x[t];if(!c||c.rencontre)return;o.tours.push(t);
-    c.matchs.filter(m=>m.fini&&!m.dbl).forEach(m=>{o.j++;if(m.gagne)o.v++;else if(m.nul)o.n++;else o.d++})});
+    c.matchs.filter(m=>m.fini&&!m.dbl).forEach(m=>{o.j++;if(m.gagne)o.v++;else if(m.nul)o.n++;else o.d++;if(m.an&&(m.an.st||m.an.str||m.an.apr))o.an.push({adv:m.adv,an:m.an})})});
+  o.g15=recsClasse().filter(r=>r.k===k&&r.g15&&T.some(t=>Math.floor(t)===r.seance)).map(r=>r.g15)[0]||null;
   // points marqués et encaissés, à partir des poules elles-mêmes
   poulesClasse().filter(p=>T.includes(p.seance)&&!p.rb).forEach(p=>p.matchs.forEach(m=>{if(m.dbl)return;const e=TTL.etatMatch(m,p.fmt);if(!e.fini)return;
     ['a','b'].forEach(c=>{if(cleEleve(p.classe,p.joueurs[m[c]])===k){o.pts+=c==='a'?e.pa:e.pb;o.contre+=c==='a'?e.pb:e.pa}})}));
@@ -133,7 +134,7 @@ function vNote(){
   ${L.map(k=>{const N=noteEleve(k,R,C),I=indicateurs(k,R),A=alertes(k,R,I),e=N.e,M=N.M,ref=reperePts(M.j?M.pts:null);
     return `<tr><td><button class="lien" type="button" data-act="fiche" data-k="${esc(k)}">${esc(nomAffiche(k))}</button>${A.length?` <span class="badge st-oubli" title="${esc(A.join(' '))}">⚠</span>`:''}</td>
       <td><select class="nsel" data-note="rep" data-k="${esc(k)}">${Object.keys(REPS).map(r=>`<option${(e.rep||'4/4')===r?' selected':''}>${r}</option>`).join('')}</select></td>
-      <td class="small">${M.j?`<b>${M.j}</b> match${M.j>1?'s':''}${M.j<3?' <span class="badge st-oubli">moins de 3</span>':''}<br>${M.v} V · ${M.n} N · ${M.d} D<br>points marqués ${M.pts}`:'<span class="muted">aucun match lu</span>'}<br>projets ${I.pjOk}/${I.pj} réalisés</td>
+      <td class="small">${M.j?`<b>${M.j}</b> match${M.j>1?'s':''}${M.j<3?' <span class="badge st-oubli">moins de 3</span>':''}<br>${M.v} V · ${M.n} N · ${M.d} D<br>points marqués ${M.pts}`:'<span class="muted">aucun match lu</span>'}<br>projets ${I.pjOk}/${I.pj} réalisés<br>analyses ${M.an.length}/${M.j}${M.g15?' · 15 min ✓':''}${M.an.length||M.g15?`<details><summary>lire</summary>${M.g15?`<div><b>15 min</b> · duo : ${esc(M.g15.duo||'—')} · duel : ${esc(M.g15.duel||'—')}</div>`:''}${M.an.map(a=>`<div><b>contre ${esc(a.adv)}</b>${htmlAnalyse(a.an)}</div>`).join('')}</details>`:''}</td>
       ${cel('afl1',k,12,'a1','p1',N.r.a1,suggestionAFL1(I,M),e)}
       ${cel('afl2',k,N.rep[0],'a2','p2',N.r.a2,suggestionAFL2(I),e)}
       ${cel('afl3',k,N.rep[1],'a3','p3',N.r.a3,suggestionAFL3(I),e)}
@@ -145,9 +146,9 @@ function vNote(){
 }
 function exporterNotes(){
   const C=cfgNote(),R=resultatsPoules();
-  const rows=[['Classe','Élève','Répartition AFL2/AFL3','Matchs de l’épreuve','Victoires','Nuls','Défaites','Points marqués','Projets réalisés','Degré AFL1','AFL1 /12','Degré AFL2','AFL2','Degré AFL3','AFL3','Total /20','Total arrondi','Alertes']];
+  const rows=[['Classe','Élève','Répartition AFL2/AFL3','Matchs de l’épreuve','Victoires','Nuls','Défaites','Points marqués','Projets réalisés','Matchs analysés','Gestion des 15 min','Degré AFL1','AFL1 /12','Degré AFL2','AFL2','Degré AFL3','AFL3','Total /20','Total arrondi','Alertes']];
   eleves().forEach(k=>{const N=noteEleve(k,R,C),e=N.e,M=N.M,I=indicateurs(k,R);
-    rows.push([DB.classe,nomAffiche(k),e.rep||'4/4',M.j,M.v,M.n,M.d,M.pts,I.pj?I.pjOk+'/'+I.pj:'',
+    rows.push([DB.classe,nomAffiche(k),e.rep||'4/4',M.j,M.v,M.n,M.d,M.pts,I.pj?I.pjOk+'/'+I.pj:'',M.an.length,M.g15?'duo : '+(M.g15.duo||'')+' / duel : '+(M.g15.duel||''):'',
       e.a1?'D'+e.a1:'',dec(N.r.a1==null?null:r2(N.r.a1)),e.a2?'D'+e.a2:'',dec(N.r.a2==null?null:r2(N.r.a2)),e.a3?'D'+e.a3:'',dec(N.r.a3==null?null:r2(N.r.a3)),dec(N.tot),dec(N.tot05),alertes(k,R,I).join(' ')])});
   telecharger('BAD_'+(DB.classe||'classe').replace(/[^A-Za-z0-9]+/g,'')+'_notes.csv',csv(rows));
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#16A34A">
+<meta name="theme-color" content="#0E7490">
 <meta name="robots" content="noindex">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
 @font-face{font-family:"Atkinson";src:url(polices/atkinson-700.woff2) format("woff2");font-weight:700;font-display:swap}
 /* Charte des applis de cycle (ecran.css) + couleurs GAREEPS d'origine */
 :root{--sol:#F3F5F8;--craie:#FFFFFF;--encre:#172033;--repere:#5A6475;--trait:#DDE2E8;--sur-encre:#FFFFFF;
-  --ligne:#16A34A;--ligne-fonce:#166534;--ligne-pale:#DCFCE7;--vert:#1D6B3A;--vert-pale:#E6F3EA;--alerte:#B42318;--alerte-pale:#FDE8E6;
+  --ligne:#0E7490;--ligne-fonce:#155E75;--ligne-pale:#CFFAFE;--vert:#1D6B3A;--vert-pale:#E6F3EA;--alerte:#B42318;--alerte-pale:#FDE8E6;
   --d:"Archivo","Arial Narrow",Arial,sans-serif;--t:"Atkinson","Segoe UI",Roboto,Arial,sans-serif;
   /* 4 niveaux GAREEPS : rouge, jaune, vert, vert foncé */
   --n1:#FF0000;--n2:#FFFF00;--n3:#70AD47;--n4:#385723;
@@ -128,7 +128,7 @@ nav.onglets button.ici{color:var(--ligne-fonce);box-shadow:inset 0 4px 0 var(--l
 .avert{background:var(--ligne-pale);color:var(--ligne-fonce);border-radius:12px;padding:10px 12px;font-weight:700}
 .illus{position:relative;display:block;width:100%;margin:10px 0 0;padding:0;border:1.5px solid var(--trait);border-radius:12px;overflow:hidden;background:#fff;text-align:left}
 .illus img{display:block;width:100%;height:auto;max-height:260px;object-fit:contain;background:#fff}
-.illus .play{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(22,163,74,.92);color:#fff;font-size:28px;display:grid;place-items:center;padding-left:5px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.illus .play{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(14,116,144,.92);color:#fff;font-size:28px;display:grid;place-items:center;padding-left:5px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
 .illus .lv{display:block;padding:8px 12px;background:var(--encre);color:var(--sur-encre);font-weight:700;font-size:15px}
 .illus.sans .lv{background:var(--sol);color:var(--repere);font-weight:400}
 .sansimg{display:block;padding:24px 12px;color:#14202e;font-weight:700}
@@ -220,8 +220,8 @@ svg.courbe .p{fill:var(--ligne)}svg.courbe text{font:12px var(--t);fill:var(--re
 svg.radar2{width:100%;max-width:360px;height:auto}
 svg.radar2 .ring{fill:none;stroke:var(--trait)}svg.radar2 text{font:11px var(--t);fill:var(--repere)}
 svg.radar2 .deb{fill:rgba(90,100,117,.15);stroke:#5A6475;stroke-width:2;stroke-dasharray:6 4}
-svg.radar2 .fin{fill:rgba(22,163,74,.18);stroke:#16A34A;stroke-width:3}
-.leg{display:inline-block;width:22px;height:0;border-top:3px solid #16A34A;vertical-align:middle}.leg.deb{border-top:3px dashed #5A6475}
+svg.radar2 .fin{fill:rgba(14,116,144,.18);stroke:#0E7490;stroke-width:3}
+.leg{display:inline-block;width:22px;height:0;border-top:3px solid #0E7490;vertical-align:middle}.leg.deb{border-top:3px dashed #5A6475}
 @media print{.noprint,#onglets,.barre #classes{display:none!important}body{background:#fff}.carte{break-inside:avoid;border-color:#bbb}select{appearance:none;border:0;background:none;padding:0}}
 .bandeau{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;background:var(--ligne-pale);color:var(--ligne-fonce);border-radius:12px;padding:10px 14px;margin:8px 0;font-weight:700;font-size:15px}
 .bandeau.rouge{background:var(--alerte-pale);color:var(--alerte)}
@@ -259,11 +259,19 @@ td .bt.mini{min-width:44px}
 .sr-nav{display:flex;justify-content:space-between;gap:10px;margin-top:4px}.sr-nav .bt{min-height:56px;flex:1}
 @media (max-width:560px){.sr-c{grid-template-columns:1fr}.sr-b small{display:none}}
 @media print{.sr{display:none}}
+.analyse{margin:4px 0 2px 10px;padding:4px 8px;border-left:3px solid var(--ligne);background:var(--sol);border-radius:0 8px 8px 0}.sr-an{margin:6px 0 10px}
+</style>
+<link rel="stylesheet" href="eps-charte-v1.css">
+<style>/* Charte v1 — Badminton : couleur de l'activité (calculée comme construire.py, depuis activites.json) */
+:root{--act:#0e7490;--act-fonce:#094859;--act-pale:#e2eef2;--act-sombre:#7ab3c2;--act-pale-sombre:#142f3a}
+:root[data-theme="dark"] .demo-bandeau{background:#3A3010;color:#FFE08A;border-color:#8A6D00}
+:root[data-theme="dark"] .schema{background:#161b22}
+.baide{flex:0 0 auto;width:44px;min-width:44px;height:44px;padding:0!important;border-radius:50%!important;font-weight:900;font-size:19px;margin-left:auto}
 </style>
 </head>
 <body>
 <header>
-  <div class="barre"><img src="icon-192.png" alt=""><div class="app">Badminton · Prof<small>Séances et tournoi des élèves</small></div><div id="classes"></div></div>
+  <div class="barre"><img src="icon-192.png" alt=""><div class="app">Badminton · Prof<small>Séances et tournoi des élèves</small></div><button type="button" class="bt mini baide" onclick="EPSAide.ouvrir()" aria-label="Mode d’emploi" title="Mode d’emploi">?</button><div id="classes"></div></div>
   <div class="trace"></div>
   <nav id="onglets"></nav>
 </header>
@@ -285,5 +293,7 @@ d.style.cssText="position:fixed;left:12px;right:12px;top:10px;z-index:90;display
 d.innerHTML='<span style="flex:1;font-weight:700">✨ Nouvelle version de l’outil prof</span><button class="bt mini orange" type="button" id="maj-ok">Mettre à jour</button><button class="bt mini" type="button" id="maj-non">Plus tard</button>';
 document.body.appendChild(d);d.querySelector("#maj-ok").onclick=()=>location.reload();d.querySelector("#maj-non").onclick=()=>d.remove()});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{})})}</script>
+<script src="aide.js"></script>
+<script src="eps-aide.js"></script>
 </body>
 </html>

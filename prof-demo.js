@@ -37,6 +37,7 @@ function construireDemo(){
     M.forEach((m,i)=>{
       m.m=scorer(m,J,fmt);const e=TTL.etatMatch(m,fmt),wa=e.ma,wb=e.mb;
       if(r()<.45){m.pj=[ent(0,TTL.PROJETS.length-1),ent(0,TTL.PROJETS.length-1)];m.pjok=[r()<.6,r()<.5]}
+      if(s===8&&r()<.75){const AN=[['attaquant, fort en smash','le faire reculer puis amortir','il défend bien au fond : je joue plus court'],['défenseur régulier, revers faible','jouer sur son revers et accélérer','ça marche, je garde'],['rapide au filet, dégagé court','dégagés hauts et longs','j’ai trop joué au centre']];m.an=[pick(AN),r()<.6?pick(AN):null].map(x=>x?{st:x[0],str:x[1],apr:x[2]}:null)}
       if(s>=3&&r()<.6){const c=x=>[ent(1,3),ent(1,5),ent(0,2),ent(0,2),ent(0,3)].map(v=>Math.round(v*x));m.co={a:c(wa>wb?1:.6),b:c(wb>wa?1:.6)}}
     });
     return {num,fmt,rb:!!rb,mouv:!rb,arbDisp:'',joueurs:J,matchs:M};
@@ -73,6 +74,7 @@ function construireDemo(){
         axes:ax.map((k,j)=>({k,val:s>=4&&j===0&&r()<.35})),
         chg:s===3&&i%7===0?[{de:'diff',vers:ax[0],motif:'C’est trop difficile pour l’instant'}]:[],
         ex,bilan:r()<.3?pick(['Bonne séance','Service court à travailler','J’ai progressé en dégagé','Difficile aujourd’hui']):'',disp:dp,groupe:g.slice(),
+        g15:s===8&&r()<.8?{duo:pick(['dégagés et amortis en diagonale, puis services','routine coup droit / revers, 20 frappes']),duel:pick(['2 matchs en 5 points avec mon projet','match de 3 min contre un partenaire'])}:null,
         etoile:et,grille:s>=3&&r()<.5?(()=>{const c=[ent(1,4),ent(2,6),ent(0,3),ent(0,2),ent(1,5)];return {c0:c[0],c1:c[1],c2:c[2],c3:c[3],cx:c[4],projet:'Servir court, puis attaquer au filet',scoreObserve:c[1]+2*c[2]+3*c[3]}})():null,
         pouleResume:rs?{num:rs.numero,n:rs.nbJoueurs,rang:rs.rang,pts:rs.points,v:rs.victoires,nl:rs.nuls||0,d:rs.defaites,mv:rs.mouvement||''}:null});
     })});

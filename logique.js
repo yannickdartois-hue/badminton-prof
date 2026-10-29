@@ -1,7 +1,8 @@
 /* =====================================================================
    logique.js — calculs sans affichage (poules, rencontres, export, QR)
    Badminton · appli élève et outil prof · Lycée Georges Pompidou
-   Fichier commun aux deux dépôts : garder la même version des deux côtés.
+   Fichier commun aux deux dépôts (badminton-eleves et badminton-prof) : copie IDENTIQUE des deux côtés.
+   Le test tests/circuit.js de badminton-prof vérifie que les copies sont identiques.
    ===================================================================== */
 (function(root){
 'use strict';
@@ -218,6 +219,7 @@ function versQR(o){
     if(o.arbitrePoule)q.ap=[o.arbitrePoule.numero,o.arbitrePoule.matchs];
     if(o.etoile)q.et=o.etoile.map(a=>a.degre||0);
     if(o.grilleCoach){const g=o.grilleCoach;q.g=[g.c0,g.c1,g.c2,g.c3,g.cx];if(g.projet)q.pj=cut(g.projet,80)}
+    if(o.gestion15)q.gq=[cut(o.gestion15.duo,100),cut(o.gestion15.duel,100)];
   }
   if(o.poule){const p=o.poule;q.p=[p.numero,p.nbJoueurs,p.rang,p.points,p.termine?1:0,p.mouvement||'',p.matchs.map(m=>[m.contre,m.gagne==null?(m.nul?2:-1):m.gagne?1:0,m.score]),p.arbitrages]}
   return q;

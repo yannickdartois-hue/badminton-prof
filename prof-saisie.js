@@ -22,6 +22,7 @@ function srRendre(){
   const html=`<div class="sr-in" role="dialog" aria-label="Saisie rapide des notes">
     <div class="sr-h"><div><div class="small muted">${SR+1} / ${L.length} · ${esc(DB.classe)}</div><h2>${esc(nomAffiche(k))}</h2></div><button type="button" class="bt mini" data-sr="fermer">Fermer</button></div>
     <div class="sr-res"><span>Épreuve : <b>${M.j}</b> match${M.j>1?'s':''} · ${M.v} V, ${M.n} N, ${M.d} D · ${M.pts} points marqués · projets ${I.pjOk}/${I.pj}</span><span>Total /20 : <b class="tot">${fr(N.tot05)}</b></span></div>
+    ${M.an.length||M.g15?`<details class="sr-an"><summary>Ses analyses (${M.an.length}/${M.j} matchs)${M.g15?' et sa gestion des 15 min':''}</summary>${M.g15?`<div class="small"><b>15 min</b> · duo : ${esc(M.g15.duo||'—')} · duel : ${esc(M.g15.duel||'—')}</div>`:''}${M.an.map(a=>`<div class="small"><b>contre ${esc(a.adv)}</b>${htmlAnalyse(a.an)}</div>`).join('')}</details>`:`<p class="small muted">Aucune analyse de match reçue.</p>`}
     <div class="sr-rep"><span class="small">Répartition AFL2/AFL3</span>${Object.keys(REPS).map(r=>`<button type="button" class="bt mini${(e.rep||'4/4')===r?' on':''}" data-sr="rep" data-v="${r}">${r}</button>`).join('')}</div>
     ${lignes}
     <div class="sr-nav"><button type="button" class="bt" data-sr="nav" data-v="-1" ${SR?'':'disabled'}>‹ Précédent</button><button type="button" class="bt orange" data-sr="nav" data-v="1" ${SR<L.length-1?'':'disabled'}>Suivant ›</button></div>
