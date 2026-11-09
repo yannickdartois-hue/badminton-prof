@@ -2,7 +2,7 @@
    La page est rechargée depuis GitHub si le réseau répond en moins de 3 s, sinon depuis l'iPad ;
    les autres fichiers sont servis depuis l'iPad et mis à jour en arrière-plan.
    Après une modification des fichiers : augmenter le numéro de CACHE (badminton-prof-vN). */
-const CACHE='badminton-prof-v15';
+const CACHE='badminton-prof-v16';
 // Toutes les applis partagent le même stockage (même adresse github.io) : on n'efface QUE les anciennes versions de CETTE appli.
 const MES_CACHES=/^(?:badminton\-prof-v|bdp-v)\d+$/;
 const FICHIERS=['./','eps-code.js','eps-maj.js','eps-coffre.js','eps-garde.js','eps-avatars.js','img/avatars/prof.webp','img/avatars/tableau.webp','index.html','aide.js','eps-aide.js','eps-charte-v1.css','prof.js','prof-plus.js','prof-demo.js','prof-poules.js','prof-cycle.js','prof-saisie.js','donnees.js','logique.js','scan.js','jsqr.js','jszip.js','xlsx.js','qrcode.js','manifest.webmanifest',
